@@ -41,3 +41,7 @@ For capturing game video the use of keyboard shortcuts is recommended when activ
 For game-play moments, cinematic sequences should be triggered with events by setting the **PlayOnEvent** property. At the given game-play moment a server script should call `Events.BroadcastToPlayer()`. If all players should see the cinematic at the same time use `Events.BroadcastToAllPlayers()` instead.
 
 See the Core API for more info about events.
+
+## Credits
+
+Minor changes were made, but the credit goes to standardcombo for the base component.
