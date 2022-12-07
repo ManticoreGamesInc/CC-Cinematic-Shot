@@ -48,6 +48,12 @@ Objects {
     }
   }
   ParentId: 4781671109827199097
+  Collidable_v2 {
+    Value: "mc:ecollisionsetting:inheritfromparent"
+  }
+  Visible_v2 {
+    Value: "mc:evisibilitysetting:inheritfromparent"
+  }
   TemplateInstance {
     ParameterOverrideMap {
       key: 16970858865191353873
@@ -56,23 +62,14 @@ Objects {
           Name: "Name"
           String: "Cinematic Shot Component"
         }
-      }
-    }
-    ParameterOverrideMap {
-      key: 17573000759818343513
-      value {
         Overrides {
           Name: "Position"
           Vector {
-            X: 471.905914
-            Z: 613.907593
           }
         }
         Overrides {
           Name: "Rotation"
           Rotator {
-            Pitch: -30.7514648
-            Yaw: -177.836594
           }
         }
       }
@@ -125,7 +122,7 @@ Objects {
     }
   }
   Relevance {
-    Value: "mc:eproxyrelevance:critical"
+    Value: "mc:edistancerelevance:critical"
   }
   NetworkRelevanceDistance {
     Value: "mc:eproxyrelevance:critical"

@@ -2,7 +2,7 @@
 	Cinematic Tool - Client
 	v1.2
 	by: standardcombo, CommanderFoo
-	
+
 	See the README for usage info.
 --]]
 
@@ -57,36 +57,36 @@ nextTake = nil
 
 function Tick(deltaTime)
 	if not isPlaying then return end
-	
+
 	-- Time
 	elapsedTime = elapsedTime + deltaTime
-	
+
 	if (elapsedTime > DURATION) then
 		Next()
 		return
 	end
-	
+
 	local t = elapsedTime / DURATION
-	
+
 	-- Easing of time
 	if USE_EASE_FUNCTION then
 		t = (t^EASE_STRENGTH) / ((t^EASE_STRENGTH) + ((1-t) ^ EASE_STRENGTH))
 	end
-	
+
 	-- Position
 	local pos = Vector3.Lerp(START_POS, END_POS, t)
 	local targetPos = TARGET:GetWorldPosition()
-	
+
 	if ORBIT_SHORT_PATH or ORBIT_LONG_PATH then
 		-- Center of the orbital path depends on the look options
 		local orbitCenter = ROOT:GetWorldPosition()
 		if LOOK_AT_PLAYER and Game.GetLocalPlayer() then
 			orbitCenter = Game.GetLocalPlayer():GetWorldPosition()
-			
+
 		elseif LOOK_AT_TARGET then
 			orbitCenter = targetPos
 		end
-		
+
 		local v1 = Vector3.New(START_POS.x - orbitCenter.x, START_POS.y - orbitCenter.y, 0)
 		local v2 = Vector3.New(END_POS.x - orbitCenter.x, END_POS.y - orbitCenter.y, 0)
 		local q = Quaternion.New(v1, v2)
@@ -98,20 +98,20 @@ function Tick(deltaTime)
 		local dist = CoreMath.Lerp(startDistanceToTarget, endDist, t)
 		orbitCenter.z = CoreMath.Lerp(START_POS.z, END_POS.z, t)
 		pos = orbitCenter + v * dist
-		
+
 	elseif (not LINEAR_PATH) then
 		local v = (pos - targetPos):GetNormalized()
 		local endDist = (END_POS - targetPos).size
 		local dist = CoreMath.Lerp(startDistanceToTarget, endDist, t)
 		pos = targetPos + v * dist
 	end
-	
+
 	CAMERA:SetWorldPosition(pos)
-	
+
 	-- Rotation
 	if LOOK_AT_PLAYER and Game.GetLocalPlayer() then
 		CAMERA:LookAt(Game.GetLocalPlayer():GetWorldPosition())
-		
+
 	elseif LOOK_AT_TARGET then
 		CAMERA:LookAt(targetPos)
 	else
@@ -125,9 +125,9 @@ function Tick(deltaTime)
 			rot = Rotation.New(vt.x, vt.y, vt.z)
 		end
 		CAMERA:SetWorldRotation(rot)
-		
+
 	end
-	
+
 	-- Field of View
 	local fov = CoreMath.Lerp(START_FOV, END_FOV, t)
 	CAMERA.fieldOfView = fov
@@ -137,42 +137,46 @@ function Play()
 	if GetActiveTake() then
 		GetActiveTake().Stop()
 	end
-	
+
 	SetActiveTake(script)
 	isPlaying = true
-	
+
 	CAMERA:SetWorldPosition(START_POS)
 	CAMERA.fieldOfView = START_FOV
-	
+
 	elapsedTime = 0
-	
+
 	startDistanceToTarget = (START_POS - TARGET:GetWorldPosition()).size
-	
+
 	local player = Game.GetLocalPlayer()
 	player:SetOverrideCamera(CAMERA)
 end
 
 function Stop()
 	if (not IsActiveTake()) then return end
-	
+
 	if HOLD_DURATION then
-		Task.Wait(HOLD_DURATION)	
+		Task.Wait(HOLD_DURATION)
 	end
 
 	SetActiveTake(nil)
 	isPlaying = false
-	
+
 	local player = Game.GetLocalPlayer()
 	player:ClearOverrideCamera()
 end
 
 function Next()
 	if (not IsActiveTake()) then return end
-	
+
 	if (nextTake) then
 		SetActiveTake(nil)
 		isPlaying = false
-		
+
+		if HOLD_DURATION then
+			Task.Wait(HOLD_DURATION)
+		end
+
 		nextTake.Play()
 	else
 		Stop()
@@ -198,7 +202,7 @@ function OnBindingPressed(player, action)
 	if (action == KEY_BINDING) then
 		if isPlaying and elapsedTime > 0 then
 			Next()
-			
+
 		elseif (isHeadTake and (GetActiveTake() == nil or GetActiveTake().KEY_BINDING ~= KEY_BINDING)) then
 			Play()
 		end
@@ -219,10 +223,10 @@ function Setup()
 	if (not _G.CinematicTool) then
 		_G.CinematicTool = {}
 	end
-	
+
 	if IsStringValid(LISTEN_TO_EVENT) then
 		EnqueWithID(LISTEN_TO_EVENT)
-		
+
 	elseif IsStringValid(KEY_BINDING) then
 		EnqueWithID(KEY_BINDING)
 	end
@@ -231,7 +235,7 @@ end
 function EnqueWithID(id)
 	if _G.CinematicTool[id] then
 		local prevTake = _G.CinematicTool[id]
-		
+
 		if (prevTake.SEQUENCE_NUMBER > SEQUENCE_NUMBER) then
 			-- New head
 			_G.CinematicTool[id] = script.context
@@ -275,7 +279,7 @@ function SlerpBothWays(q0, q1, t, shortArc)
     local dot = v0 .. v1
     -- If the dot product is negative, slerp won't take
     -- the shorter path. Note that v1 and -v1 are equivalent when
-    -- the negation is applied to all four components. Fix by 
+    -- the negation is applied to all four components. Fix by
     -- reversing one quaternion.
     if (shortArc) then
 		if (dot < 0.0) then

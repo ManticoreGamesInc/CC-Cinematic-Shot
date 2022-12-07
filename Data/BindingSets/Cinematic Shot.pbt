@@ -2,7 +2,7 @@ Assets {
   Id: 15712243038875801628
   Name: "Cinematic Shot"
   PlatformAssetType: 29
-  SerializationVersion: 120
+  SerializationVersion: 121
   VirtualFolderPath: "Cinematic Shot"
   BindingSetAsset {
     Bindings {
